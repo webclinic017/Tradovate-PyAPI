@@ -5,36 +5,60 @@
 ## URL Endpoints               ##
 ##-----------------------------##
 
+## Imports
+from __future__ import annotations
+from enum import Enum
+
 ## Constants
 # -Base URLs
-base_live = "https://live.tradovateapi.com/v1/"
-base_demo = "https://demo.tradovateapi.com/v1/"
-market_live = "https://md.tradovateapi.com/v1/"
-market_demo = "https://md-demo.tradovateapi.com/v1/"
-# -Authorization Endpoints
-auth_oauth = "auth/oauthtoken"
-auth_request = "auth/accesstokenrequest"
-auth_renew = "auth/renewaccesstoken"
-auth_me = "auth/me"
-# -Account Endpoints
-account_list = "account/list"
-account_get_by_id = "account/item"
-account_get_by_ids = "account/items"
-account_get_by_name = "account/find"
-account_dependents_by_id = "account/deps"
-account_dependents_by_ids = "account/ldeps"
-account_suggest = "account/suggest"
-# -Account: Cash Balance Endpoints
-cashbalance_list = "cashbalance/list"
-cashbalance_by_id = "cashbalance/item"
-cashbalance_by_ids = "cashbalance/items"
-cashbalance_dependents_by_id = "cashbalance/deps"
-cashbalance_dependents_by_ids = "cashbalance/ldeps"
-cashbalance_snapshot_by_id = "cashbalance/getcashbalancesnapshot"
-# -Account: Cash Balance Log Endpoints
-# -Account: Margin Endpoints
-# -Account: Permission Endpoints
-# -Order Endpoints
-order_create = "order/placeorder"
-# -Position Endpoints
-position_list = "position/list"
+_domains = (
+    "://live.tradovateapi.com/v1/",     # -Live Account Functionality
+    "://demo.tradovateapi.com/v1/",     # -Demo Account Functionality
+    "://md.tradovateapi.com/v1/",       # -Live Market Functionality
+    #"://md-demo.tradovateapi.com/v1/",  # -Demo Market Functionality [?]
+    #"://replay.tradovateapi.com/v1",    # -Replay Market Functionality
+)
+http_base_live, http_base_demo, http_base_market = [
+    f"https{domain}" for domain in _domains
+]
+wss_base_live, wss_base_demo, wss_base_market = [
+    f"wss{domain}websocket" for domain in _domains
+]
+# -Authorization
+# -HTTP[Live Only]
+http_base_auth = http_base_live + "auth/"
+http_auth_oauth = http_base_auth + "oauthtoken"
+http_auth_request = http_base_auth + "accesstokenrequest"
+http_auth_renew = http_base_auth + "renewaccesstoken"
+http_auth_me = http_base_auth + "me"
+# -Websocket
+wss_auth = "authorize"
+
+
+## Functions
+# -Account
+def get_account(endpoint: ENDPOINT, id_: int) -> str:
+    """URL Endpoint for getting single account"""
+    url = "account/item"
+    if endpoint == ENDPOINT.WEBSOCKET:
+        return url
+    return endpoint.value + url + f"/?id={id_}"
+
+
+def get_accounts(
+    endpoint: ENDPOINT, ids: list[int] | None = None
+) -> str:
+    """URL Endpoint for getting multiple accounts - by id or full list"""
+    url = "account/items" if ids else "account/list"
+    if endpoint == ENDPOINT.WEBSOCKET:
+        return url
+    url += "/?ids=" + ','.join(str(i) for i in ids) if ids else ""
+    return endpoint.value + url
+
+
+## Classes
+class ENDPOINT(Enum):
+    """URL Endpoint Enum"""
+    LIVE = http_base_live
+    DEMO = http_base_demo
+    WEBSOCKET = None
