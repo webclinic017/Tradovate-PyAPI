@@ -4,6 +4,8 @@
 ##-----------------------------##
 
 ## Imports
+from .profile import Profile
+from .client import Client
 
 """
 Tradovate PyAPI v1.0.0.0
@@ -13,6 +15,9 @@ Tradovate PyAPI v1.0.0.0
 __author__ = "Ryan Smith"
 __title__ = "Tradovate PyAPI"
 __version__ = (1, 0, 0, 0)
+__all__ = [
+    Client, Profile
+]
 
 
 ## Functions
