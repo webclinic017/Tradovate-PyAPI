@@ -4,8 +4,7 @@
 ##-----------------------------##
 
 ## Imports
-from .profile import Profile
-from .client import Client
+from .session import Session
 
 """
 Tradovate PyAPI v1.0.0.0
@@ -16,10 +15,10 @@ __author__ = "Ryan Smith"
 __title__ = "Tradovate PyAPI"
 __version__ = (1, 0, 0, 0)
 __all__ = [
-    Client, Profile
+    Session
 ]
 
 
 ## Functions
 def get_version() -> str:
-    return 'v' + '.'.join(str(i) for i in __version__)
+    return '.'.join(str(i) for i in __version__)
